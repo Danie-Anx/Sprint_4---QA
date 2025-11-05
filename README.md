@@ -145,7 +145,8 @@ springdoc.swagger-ui.path=/swagger-ui.html
 ## 🧾 Evidências 
 
 ### 🔹 Testes
-![Testes](src/main/docs/screens/sucessoTeste.png)
+![Testes](mottooth-java-main/src/main/docs/screens/sucessoTeste.png)
+
 
 
 
