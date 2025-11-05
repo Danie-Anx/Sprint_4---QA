@@ -1,0 +1,12 @@
+<header th:fragment="header(title, active)" xmlns:th="http://www.thymeleaf.org">
+    <style>
+        .container{max-width:1100px;margin:auto;padding:16px;text-align:center}
+        header h1{margin:8px 0;font-size:1.8rem}
+    </style>
+
+    <div class="container">
+        <h1 th:text="${title}">Mottu – Tracking</h1>
+    </div>
+
+    <nav th:replace="fragments/menu :: menu(${active})"></nav>
+</header>

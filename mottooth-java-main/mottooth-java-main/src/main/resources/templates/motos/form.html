@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title th:text="${moto.id} != null ? 'Editar Moto' : 'Nova Moto'">Moto</title>
+    <style>
+        :root{--c1:#0ea5e9;--bg:#0b1020;--card:#11182a;--txt:#e5e7eb}
+        *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,Arial}
+        .container{max-width:900px;margin:auto;padding:16px}
+        .card{background:var(--card);border-radius:16px;padding:22px;margin-top:16px}
+        label{display:block;margin-top:10px}
+        input,select{width:100%;padding:12px;border-radius:10px;border:1px solid #334155;background:#0e1627;color:#e5e7eb}
+        .grid{display:grid;gap:14px;grid-template-columns:1fr 1fr}
+        .btn{background:var(--c1);color:#001827;border:0;border-radius:10px;padding:10px 12px;font-weight:700;cursor:pointer}
+        .btn.sec{background:#334155;color:#e5e7eb}
+        .right{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+        .err{color:#fca5a5;font-size:.9rem}
+        .flash-ok{color:#86efac}.flash-err{color:#fca5a5}
+        .hint{font-size:.85rem;opacity:.8;margin-top:4px}
+    </style>
+</head>
+<body>
+<div th:replace="fragments/header :: header('Mottu Tracking','motos')"></div>
+
+<main class="container">
+    <h2 th:text="${moto.id} != null ? 'Editar Moto' : 'Nova Moto'">Moto</h2>
+
+    <!-- msgs de validação vinda do controller -->
+    <p th:if="${ok}"   class="flash-ok"  th:text="${ok}"></p>
+    <p th:if="${erro}" class="flash-err" th:text="${erro}"></p>
+
+    <div class="card">
+        <form id="motoForm"
+              th:object="${moto}"
+              th:action="${moto.id} != null ? @{/motos/editar/{id}(id=${moto.id})} : @{/motos/novo}"
+              method="post" class="grid">
+
+            <input type="hidden" th:field="*{id}"/>
+
+            <label>Placa
+                <!--
+                  Regras aplicadas:
+                  - maxlength = 8 (ex.: ABC-1234)
+                  - pattern: aceita ABC-1234 (padrão antigo) e ABC1D23 (Mercosul)
+                  - oninput: normaliza para MAIÚSCULAS e valida
+                -->
+                <input id="placaInput"
+                       th:field="*{placa}"
+                       maxlength="8"
+                       pattern="^[A-Za-z]{3}-?[0-9][A-Za-z0-9][0-9]{2}$"
+                       title="Use ABC-1234 (7+1) ou ABC1D23 (Mercosul)."
+                       required/>
+                <small class="hint">Formato aceito: <b>ABC-1234</b> (máx. 8 caracteres) ou <b>ABC1D23</b>.</small>
+                <span id="placaErro" class="err" style="display:none"></span>
+                <span class="err" th:if="${#fields.hasErrors('placa')}" th:errors="*{placa}">erro</span>
+            </label>
+
+            <label>Cliente
+                <select th:field="*{clienteId}">
+                    <option value="" disabled th:selected="${moto.clienteId} == null">Selecione</option>
+                    <option th:each="c: ${clientes}" th:value="${c.id}" th:text="${c.nome}"></option>
+                </select>
+            </label>
+
+            <label>Modelo
+                <select th:field="*{modeloMotoId}">
+                    <option value="" disabled th:selected="${moto.modeloMotoId} == null">Selecione</option>
+                    <option th:each="m: ${modelos}" th:value="${m.id}" th:text="${m.nome + ' - ' + m.fabricante}"></option>
+                </select>
+            </label>
+
+            <div class="right" style="grid-column:1/-1">
+                <a class="btn sec" th:href="@{/motos}">Cancelar</a>
+                <button class="btn" type="submit">Salvar</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<div th:replace="fragments/footer :: footer()"></div>
+
+<script>
+    (function () {
+        const input = document.getElementById('placaInput');
+        const erro  = document.getElementById('placaErro');
+        const MAX   = 8; // ABC-1234 tem 8 com hífen; ABC1D23 tem 7 (mas o maxlength limita 8 de qualquer forma)
+
+        function normalize(v){
+            return (v || '').toUpperCase().trim();
+        }
+
+        function showError(msg){
+            erro.textContent = msg;
+            erro.style.display = 'inline';
+        }
+
+        function hideError(){
+            erro.textContent = '';
+            erro.style.display = 'none';
+        }
+
+        function validate(){
+            // normaliza para MAIÚSCULAS
+            input.value = normalize(input.value);
+
+            const v = input.value;
+            if (v.length > MAX){
+                showError(`Placa com ${v.length} caracteres. O máximo permitido é ${MAX}.`);
+                return false;
+            }
+            // valida pattern HTML (se existir)
+            if (input.pattern){
+                try {
+                    const re = new RegExp(input.pattern);
+                    if (!re.test(v)){
+                        showError('Formato inválido. Use ABC-1234 ou ABC1D23.');
+                        return false;
+                    }
+                } catch(e) {
+                    // se por algum motivo o pattern falhar, ignore e deixe o HTML5 cuidar
+                }
+            }
+            hideError();
+            return true;
+        }
+
+        input.addEventListener('input', validate);
+
+        document.getElementById('motoForm').addEventListener('submit', function (e) {
+            if (!validate()){
+                e.preventDefault();
+                input.focus();
+            }
+        });
+
+        // valida ao carregar a página (caso a placa venha preenchida)
+        validate();
+    })();
+</script>
+</body>
+</html>
