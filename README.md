@@ -142,14 +142,10 @@ springdoc.swagger-ui.path=/swagger-ui.html
 
 ---
 
-## 🧾 Evidências (Resultados)
+## 🧾 Evidências 
 
-- ✅ **Execução bem-sucedida dos 7 testes automatizados**
-- ⚡ **Status retornados:** 200 / 404 conforme esperado
-- 🔐 **Login JWT validado com sucesso**
-- 💾 **Banco Oracle e Flyway integrados corretamente**
-- 📈 **IntelliJ / Maven:** “Tests passed: 7 / 7”
-
+### 🔹 Testes
+![Login](./src/main/docs/screens/SucessoTeste.png)
 ---
 
 ## 🗂️ Entregáveis da Sprint 4
@@ -167,7 +163,9 @@ springdoc.swagger-ui.path=/swagger-ui.html
 ## 👤 Equipe
 
 **RM 555881 — Robert Daniel da Silva Coimbra**
+
 **RM 558798 — Arthur Ramos dos Santos**
+
 **RM 556099 — Felipe Melo de Sousa**
 
 
