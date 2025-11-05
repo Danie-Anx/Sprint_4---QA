@@ -145,7 +145,7 @@ springdoc.swagger-ui.path=/swagger-ui.html
 ## 🧾 Evidências 
 
 ### 🔹 Testes
-![Login](./src/main/docs/screens/SucessoTeste.png)
+![Testes](./src/main/docs/screens/SucessoTeste.png)
 ---
 
 ## 🗂️ Entregáveis da Sprint 4
